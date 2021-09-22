@@ -17,7 +17,7 @@ class Ui_MainWindow(object):
 
     def searchClicked(self):
 
-        self.textBrowser.clear()
+        self.personInfo.clear()
         self.recordBrowser.clear()
         queriedPerson = self.searchBox.toPlainText()
         workerID = 9999
@@ -32,7 +32,7 @@ class Ui_MainWindow(object):
                 for line in csv.reader(workerList):
                     if queriedPerson == line[0]:
                         workerID = line[0]
-                        self.textBrowser.setText("Worker ID: " + line[0] +
+                        self.personInfo.setText("Worker ID: " + line[0] +
                                                  "\nFirst Name: " + line[1] +
                                                  "\nLast Name: " + line[2] +
                                                  "\nAccess level: " + line[3])
@@ -48,7 +48,7 @@ class Ui_MainWindow(object):
                 for line in csv.reader(workerList):
                     if queriedPerson == line[1]:
                         workerID = line[0]
-                        self.textBrowser.setText("Worker ID: " + line[0] +
+                        self.personInfo.setText("Worker ID: " + line[0] +
                                                  "\nFirst Name: " + line[1] +
                                                  "\nLast Name: " + line[2] +
                                                  "\nAccess level: " + line[3])
@@ -58,7 +58,7 @@ class Ui_MainWindow(object):
 
                     elif queriedPerson == line[2]:
                         workerID = line[0]
-                        self.textBrowser.setText("Worker ID: " + line[0] +
+                        self.personInfo.setText("Worker ID: " + line[0] +
                                                  "\nFirst Name: " + line[1] +
                                                  "\nLast Name: " + line[2] +
                                                  "\nAccess level: " + line[3])
@@ -70,7 +70,7 @@ class Ui_MainWindow(object):
                         found = False
 
         if found != True:
-            self.textBrowser.clear()
+            self.personInfo.clear()
             self.recordBrowser.clear()
 
 
@@ -87,28 +87,57 @@ class Ui_MainWindow(object):
 
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(1149, 906)
+        MainWindow.resize(1200, 1200)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.searchButton = QtWidgets.QPushButton(self.centralwidget)
         self.searchButton.setGeometry(QtCore.QRect(390, 10, 181, 51))
         self.searchButton.setObjectName("searchButton")
-        self.searchButton.clicked.connect(self.searchClicked)
         self.searchBox = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.searchBox.setGeometry(QtCore.QRect(10, 10, 371, 51))
+        self.searchBox.setGeometry(QtCore.QRect(20, 10, 361, 51))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.searchBox.setFont(font)
         self.searchBox.setObjectName("searchBox")
-        self.textBrowser = QtWidgets.QTextBrowser(self.centralwidget)
-        self.textBrowser.setGeometry(QtCore.QRect(10, 70, 561, 301))
-        self.textBrowser.setObjectName("textBrowser")
+        self.personInfo = QtWidgets.QTextBrowser(self.centralwidget)
+        self.personInfo.setGeometry(QtCore.QRect(20, 100, 551, 381))
+        font = QtGui.QFont()
+        font.setPointSize(18)
+        self.personInfo.setFont(font)
+        self.personInfo.setObjectName("personInfo")
         self.analysisOut = QtWidgets.QTextBrowser(self.centralwidget)
-        self.analysisOut.setGeometry(QtCore.QRect(10, 380, 561, 481))
+        self.analysisOut.setGeometry(QtCore.QRect(20, 520, 551, 631))
+        font = QtGui.QFont()
+        font.setPointSize(18)
+        self.analysisOut.setFont(font)
         self.analysisOut.setObjectName("analysisOut")
         self.recordBrowser = QtWidgets.QTextBrowser(self.centralwidget)
-        self.recordBrowser.setGeometry(QtCore.QRect(580, 10, 551, 851))
+        self.recordBrowser.setGeometry(QtCore.QRect(590, 60, 581, 1091))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.recordBrowser.setFont(font)
         self.recordBrowser.setObjectName("recordBrowser")
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(590, 10, 500, 41))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.label.setFont(font)
+        self.label.setObjectName("label")
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setGeometry(QtCore.QRect(20, 60, 401, 41))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.label_2.setFont(font)
+        self.label_2.setObjectName("label_2")
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
+        self.label_3.setGeometry(QtCore.QRect(20, 480, 401, 41))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.label_3.setFont(font)
+        self.label_3.setObjectName("label_3")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1149, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1200, 22))
         self.menubar.setObjectName("menubar")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
@@ -118,10 +147,15 @@ class Ui_MainWindow(object):
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
+        self.searchButton.clicked.connect(self.searchClicked)
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.searchButton.setText(_translate("MainWindow", "Search"))
+        self.label.setText(_translate("MainWindow", "Personal check-in records"))
+        self.label_2.setText(_translate("MainWindow", "Personal info"))
+        self.label_3.setText(_translate("MainWindow", "Attendance analysis"))
 
 
 
