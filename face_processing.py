@@ -7,9 +7,9 @@ import cv2
 global x,y,w,h,detected_faces,input_image
 
 cam = cv2.VideoCapture(0)
-face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+face_cascade = cv2.CascadeClassifier("venv/models/haarcascade_frontalface_default.xml")
 detected_faces = 0
-interpreter = tf.lite.Interpreter("hardhatclassifierV2.tflite")
+interpreter = tf.lite.Interpreter("venv/models/hardhatclassifierV2.tflite")
 interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
@@ -17,7 +17,12 @@ output_details = interpreter.get_output_details()
 def classifyHelmet(in_head):
     resizing = cv2.resize(in_head, (76, 76), interpolation=cv2.INTER_AREA)
     resized = np.expand_dims(resizing, axis=0)
-    print(resized.shape)
+    resized = resized.astype("float32")
+    interpreter.set_tensor(input_details[0]['index'], resized)
+    interpreter.invoke()
+    output_data = interpreter.get_tensor(output_details[0]['index'])
+    pred = output_data[0][1] * 100  # prediction probability
+    print(pred)
 
 
 while True:
@@ -58,7 +63,6 @@ while True:
 
     key = cv2.waitKey(1)
     if key == 27 and detected_faces == 1:
-        cv2.waitKey(0)
         classifyHelmet(input_image)
 
 
