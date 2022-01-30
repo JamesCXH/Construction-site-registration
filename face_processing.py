@@ -58,10 +58,6 @@ while True:
         big_rectangle = cv2.rectangle(frame, (top_left_x, top_left_y), (x + bottom_right_x, y + bottom_right_y),
                       (255, 0, 0), 1)
 
-        # cv2.putText(big_rectangle, "No hard hat detected", (x, (y+bottom_right_y+40)), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36,12,255), 2)
-
-
-
         # cv2.rectangle(frame, (x,y), (x+w, y+h),
         #               (0, 255, 0), 1)
 
