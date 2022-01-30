@@ -5,6 +5,7 @@ import tflite
 import tflite_runtime
 import cv2
 global x,y,w,h,detected_faces,input_image
+from face_recognition import *
 
 cam = cv2.VideoCapture(0)
 face_cascade = cv2.CascadeClassifier("venv/models/haarcascade_frontalface_default.xml")
@@ -22,8 +23,12 @@ def classifyHelmet(in_head):
     interpreter.invoke()
     output_data = interpreter.get_tensor(output_details[0]['index'])
     pred = output_data[0][1] * 100  # prediction probability
-    print(pred)
+    if pred > 99.9999:
+        print("Hard-hat detected")
+        identify_face(in_head)
 
+    else:
+        print("No hard-hat detected")
 
 while True:
     check, frame = cam.read()
@@ -50,11 +55,15 @@ while True:
 
         input_image = frame[top_left_y:bottom_right_y + y, top_left_x:bottom_right_x + x]
 
-        cv2.rectangle(frame, (top_left_x, top_left_y), (x + bottom_right_x, y + bottom_right_y),
+        big_rectangle = cv2.rectangle(frame, (top_left_x, top_left_y), (x + bottom_right_x, y + bottom_right_y),
                       (255, 0, 0), 1)
 
-        cv2.rectangle(frame, (x,y), (x+w, y+h),
-                      (0, 255, 0), 1)
+        # cv2.putText(big_rectangle, "No hard hat detected", (x, (y+bottom_right_y+40)), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36,12,255), 2)
+
+
+
+        # cv2.rectangle(frame, (x,y), (x+w, y+h),
+        #               (0, 255, 0), 1)
 
 
         cv2.imshow("Head", input_image)
