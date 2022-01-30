@@ -45,14 +45,15 @@ def identify_face(image_in):
     recognized_faces = face_client.face.identify(face_ids, group_name)
     try:
         if len(recognized_faces) > 0:
-            print(len(recognized_faces), 'faces recognized.')
+            # print(len(recognized_faces), 'faces recognized.')
             for face in recognized_faces:
                 detected_name = face_client.person_group_person.get(group_name, face.candidates[0].person_id).name
                 with open("exampleDB.csv", "r") as workerList:
-                    person_name = ""
+                    person_name = "Unidentified"
                     for line in csv.reader(workerList):
                         if str(detected_name) == line[0]:
                             person_name = str(str(line[1]) + " " + str(line[2]))
-                            print(person_name)
+                            # print(person_name)
+                            return person_name
     except:
-        print("Person unidentified")
+        return "Person unidentified"

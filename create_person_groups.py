@@ -51,7 +51,7 @@ def add_person(id):
         pass
 
     for i in range(len(face_client.person_group_person.list(group_name))):
-        print(str(face_client.person_group_person.list(group_name)[i].person_id))
+        # print(str(face_client.person_group_person.list(group_name)[i].person_id))
         if str(id) == str(face_client.person_group_person.list(group_name)[i].name):
             person_already_exists = True
             person_already_exists_id = str(face_client.person_group_person.list(group_name)[i].person_id)
@@ -59,18 +59,32 @@ def add_person(id):
     person_images = [file for file in glob.glob(str("venv/people/" + str(id) + "/pictures/*.jpg"))]
 
     if person_already_exists == True:
-        person = face_client.person_group_person.delete(group_name, person_already_exists_id)
         person = face_client.person_group_person.create(group_name, str(id))
         time.sleep(60)
-        for image in person_images:
-            p = open(image, "r+b")
-            face_client.person_group_person.add_face_from_stream(group_name, person.person_id, p)
+        try:
+            for image in person_images:
+                p = open(image, "r+b")
+                try:
+                    face_client.person_group_person.add_face_from_stream(group_name, person.person_id, p)
+                except:
+                    pass
+        except:
+            face_client.person_group_person.delete(group_name, person_already_exists_id)
+
+        face_client.person_group_person.delete(group_name, person_already_exists_id)
+
     else:
         person = face_client.person_group_person.create(group_name, str(id))
         time.sleep(60)
-        for image in person_images:
-            p = open(image, "r+b")
-            face_client.person_group_person.add_face_from_stream(group_name, person.person_id, p)
+        try:
+            for image in person_images:
+                p = open(image, "r+b")
+                try:
+                    face_client.person_group_person.add_face_from_stream(group_name, person.person_id, p)
+                except:
+                    pass
+        except:
+            face_client.person_group_person.delete(group_name, person_already_exists_id)
 
     face_client.person_group.train(group_name)
     while (True):
@@ -80,9 +94,5 @@ def add_person(id):
         if (training_status.status is TrainingStatusType.succeeded):
             break
         elif (training_status.status is TrainingStatusType.failed):
-            face_client.person_group.delete(person_group_id=str(id))
+            face_client.person_group_person.delete(group_name, str(id))
             sys.exit('Training the person group has failed.')
-
-# print(len(face_client.person_group_person.list(group_name)))
-#    image = open("test_pictures/5_test.jpg", 'r+b')
-

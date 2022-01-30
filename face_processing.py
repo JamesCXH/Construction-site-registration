@@ -14,6 +14,9 @@ interpreter = tf.lite.Interpreter("venv/models/hardhatclassifierV2.tflite")
 interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
+detected_name = ""
+wearing_hard_hat = False
+not_wearing_hard_hat = True
 
 def classifyHelmet(in_head):
     resizing = cv2.resize(in_head, (76, 76), interpolation=cv2.INTER_AREA)
@@ -25,10 +28,10 @@ def classifyHelmet(in_head):
     pred = output_data[0][1] * 100  # prediction probability
     if pred > 99.9999:
         print("Hard-hat detected")
-        identify_face(in_head)
-
+        return True
     else:
         print("No hard-hat detected")
+        return False
 
 while True:
     check, frame = cam.read()
@@ -38,6 +41,11 @@ while True:
     faces = face_cascade.detectMultiScale(gray, 1.1, 4)
 
     detected_faces = len(faces)
+
+    if detected_faces == 0 or detected_faces > 1:
+        wearing_hard_hat = False
+        not_wearing_hard_hat = False
+        detected_name = ""
 
     for (x, y, w, h) in faces:  # (x,y) is top left of the rectangle, (w,h) is bottom right
 
@@ -55,21 +63,27 @@ while True:
 
         input_image = frame[top_left_y:bottom_right_y + y, top_left_x:bottom_right_x + x]
 
-        big_rectangle = cv2.rectangle(frame, (top_left_x, top_left_y), (x + bottom_right_x, y + bottom_right_y),
-                      (255, 0, 0), 1)
+        # big_rectangle = cv2.rectangle(frame, (top_left_x, top_left_y), (x + bottom_right_x, y + bottom_right_y), (255, 0, 0), 1)
 
-        # cv2.rectangle(frame, (x,y), (x+w, y+h),
-        #               (0, 255, 0), 1)
+        # cv2.rectangle(frame, (x,y), (x+w, y+h), (0, 255, 0), 1)
 
+        cv2.putText(frame, str(detected_name), (x, bottom_right_y + y), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
+        if wearing_hard_hat == True:
+            cv2.putText(frame, ("Hard hat = True"), (x, bottom_right_y + y + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
+        if not_wearing_hard_hat == True:
+            cv2.putText(frame, ("Hard hat = False"), (x, bottom_right_y + y + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 36, 255), 2)
 
-        cv2.imshow("Head", input_image)
+        # cv2.imshow("Head", input_image)
 
-    cv2.imshow('video', frame)
+    cv2.imshow("video", frame)
 
     key = cv2.waitKey(1)
     if key == 27 and detected_faces == 1:
-        classifyHelmet(input_image)
-
+        if classifyHelmet(input_image) == True:
+            wearing_hard_hat = True
+            detected_name = identify_face(input_image)
+        else:
+            not_wearing_hard_hat = True
 
 
 cam.release()
