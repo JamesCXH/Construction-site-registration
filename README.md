@@ -1,5 +1,7 @@
 # Construction-site-registration
 
+created as a low-cost system for rural construction sites in China
+
 repo includes essential functions needed for system
 
 a mock database in the form of a csv is used, but please integrate with database architecture of choice
