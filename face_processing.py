@@ -63,7 +63,7 @@ while True:
 
         input_image = frame[top_left_y:bottom_right_y + y, top_left_x:bottom_right_x + x]
 
-        # big_rectangle = cv2.rectangle(frame, (top_left_x, top_left_y), (x + bottom_right_x, y + bottom_right_y), (255, 0, 0), 1)
+        big_rectangle = cv2.rectangle(frame, (top_left_x, top_left_y), (x + bottom_right_x, y + bottom_right_y), (255, 0, 0), 1)
 
         # cv2.rectangle(frame, (x,y), (x+w, y+h), (0, 255, 0), 1)
 
@@ -79,11 +79,15 @@ while True:
 
     key = cv2.waitKey(1)
     if key == 27 and detected_faces == 1:
+        wearing_hard_hat = False
+        not_wearing_hard_hat = False
+        detected_name = ""
         if classifyHelmet(input_image) == True:
             wearing_hard_hat = True
             detected_name = identify_face(input_image)
         else:
             not_wearing_hard_hat = True
+            detected_name = identify_face(input_image)
 
 
 cam.release()
