@@ -33,6 +33,13 @@ def classifyHelmet(in_head):
         print("No hard-hat detected")
         return False
 
+def largest_face(face_arr):
+    areas = [w*h for x, y, w, h in face_arr]
+    biggest_index = np.argmax(areas)
+    biggest = face_arr[biggest_index]
+    return biggest
+
+
 while True:
     check, frame = cam.read()
 
@@ -48,37 +55,39 @@ while True:
         detected_name = ""
 
     for (x, y, w, h) in faces:  # (x,y) is top left of the rectangle, (w,h) is bottom right
+        x, y, w, h = np.multiply(0.96, x).astype(np.int32), np.multiply(0.55, y).astype(np.int32), np.multiply(1.042, w).astype(np.int32), np.multiply(1.1, h).astype(np.int32)
+        # top_left_x = np.multiply(0.96, x)
+        # top_left_x = top_left_x.astype(np.int32)
 
-        top_left_x = np.multiply(0.96, x)
-        top_left_x = top_left_x.astype(np.int32)
+        # top_left_y = np.multiply(0.55, y)
+        # top_left_y = top_left_y.astype(np.int32)
 
-        top_left_y = np.multiply(0.55, y)
-        top_left_y = top_left_y.astype(np.int32)
+        # bottom_right_x = np.multiply(1.042, w)
+        # bottom_right_x = bottom_right_x.astype(np.int32)
 
-        bottom_right_x = np.multiply(1.042, w)
-        bottom_right_x = bottom_right_x.astype(np.int32)
+        # bottom_right_y = np.multiply(1.1, h)
+        # bottom_right_y = bottom_right_y.astype(np.int32)
 
-        bottom_right_y = np.multiply(1.1, h)
-        bottom_right_y = bottom_right_y.astype(np.int32)
-
-        input_image = frame[top_left_y:bottom_right_y + y, top_left_x:bottom_right_x + x]
-
-        big_rectangle = cv2.rectangle(frame, (top_left_x, top_left_y), (x + bottom_right_x, y + bottom_right_y), (255, 0, 0), 1)
-
+        big_rectangle = cv2.rectangle(frame, (x, y), (np.multiply(1/0.96, x).astype(np.int32) + w, np.multiply(1/0.55, y).astype(np.int32) + h), (255, 0, 0), 1)
         # cv2.rectangle(frame, (x,y), (x+w, y+h), (0, 255, 0), 1)
 
-        cv2.putText(frame, str(detected_name), (x, bottom_right_y + y), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
+        cv2.putText(frame, str(detected_name), (x, h + y), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
         if wearing_hard_hat == True:
-            cv2.putText(frame, ("Hard hat = True"), (x, bottom_right_y + y + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
+            cv2.putText(frame, ("Hard hat = True"), (x, h + y + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
         if not_wearing_hard_hat == True:
-            cv2.putText(frame, ("Hard hat = False"), (x, bottom_right_y + y + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 36, 255), 2)
+            cv2.putText(frame, ("Hard hat = False"), (x, h + y + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 36, 255), 2)
 
         # cv2.imshow("Head", input_image)
+    if detected_faces >= 1:
+        x, y, w, h = largest_face(faces)
+        input_image = frame[np.multiply(0.55, y).astype(np.int32):y+h, np.multiply(0.96, x).astype(np.int32):x+w]
+        cv2.imshow("FFF", input_image)
+    # input_image = frame[top_left_y:bottom_right_y + y, top_left_x:bottom_right_x + x]
 
     cv2.imshow("video", frame)
 
     key = cv2.waitKey(1)
-    if key == 27 and detected_faces == 1:
+    if key == 27:
         wearing_hard_hat = False
         not_wearing_hard_hat = False
         detected_name = ""
@@ -88,7 +97,6 @@ while True:
         else:
             not_wearing_hard_hat = True
             detected_name = identify_face(input_image)
-
 
 cam.release()
 cv2.destroyAllWindows()

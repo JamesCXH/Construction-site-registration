@@ -4,7 +4,7 @@ import csv
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_MainWindow(object): #Main window where user queries
+class Ui_MainWindow(object):  # Main window where user queries
 
     def searchClicked(self):
 
@@ -16,35 +16,30 @@ class Ui_MainWindow(object): #Main window where user queries
 
         print("searchClicked success")
 
-
         with open("exampleDB.csv", "r") as workerList:
 
-            if queriedPerson.isnumeric() == True:
+            if queriedPerson.isnumeric():
                 for line in csv.reader(workerList):
                     if queriedPerson == line[0]:
                         workerIDs.append(line[0])
                         self.populatePersonDetails(line[0])
 
-            elif queriedPerson.isnumeric() == False:
+            elif not queriedPerson.isnumeric():
 
                 for line in csv.reader(workerList):
 
-                        if queriedPerson == line[1]:
-                            workerIDs.append(line[0])
+                    if queriedPerson == line[1]:
+                        workerIDs.append(line[0])
 
-                        elif queriedPerson == line[2]:
-                            workerIDs.append(line[0])
+                    elif queriedPerson == line[2]:
+                        workerIDs.append(line[0])
 
-        if len(workerIDs) == 1: #Populates boxes with information of queried person
+        if len(workerIDs) == 1:  # Populates boxes with information of queried person
             self.populatePersonDetails(workerIDs[0])
             self.populateRecords(workerIDs[0])
 
         else:
-            pass #Need to deal with multiple search results
-
-
-
-
+            pass  # Need to deal with multiple search results
 
     def populatePersonDetails(self, workerID):
         try:
@@ -52,12 +47,11 @@ class Ui_MainWindow(object): #Main window where user queries
                 for line in csv.reader(workersDatabase):
                     if line[0] == workerID:
                         self.personInfo.setText("Worker ID: " + line[0] +
-                                                 "\nFirst Name: " + line[1] +
-                                                 "\nLast Name: " + line[2] +
-                                                 "\nAccess level: " + line[3])
+                                                "\nFirst Name: " + line[1] +
+                                                "\nLast Name: " + line[2] +
+                                                "\nAccess level: " + line[3])
         except:
             self.personInfo.setText("PERSON DOES NOT EXIST")
-
 
     def populateRecords(self, workerID):
         try:
@@ -140,9 +134,9 @@ class Ui_MainWindow(object): #Main window where user queries
         self.analysisOutLabel.setText(_translate("MainWindow", "Attendance analysis"))
 
 
-
 if __name__ == "__main__":
     import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
