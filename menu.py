@@ -32,8 +32,14 @@ class menuSelect(QWidget):
 	def launch_reset_menu(self):
 		print("YYYWWW")
 
-if __name__ == "__main__":
-	app = QApplication(sys.argv)
+def execute():
+	mainMenu = QApplication(sys.argv)
 	form = menuSelect()
 	form.show()
-	sys.exit(app.exec_())
+	sys.exit(mainMenu.exec())
+
+# if __name__ == "__main__":
+# 	mainMenu = QApplication(sys.argv)
+# 	form = menuSelect()
+# 	form.show()
+# 	sys.exit(mainMenu.exec())

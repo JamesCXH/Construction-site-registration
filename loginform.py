@@ -1,5 +1,6 @@
 import sys
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout, QMessageBox)
+import menu as menu
 
 class LoginWindow(QWidget):
 	def __init__(self):
@@ -24,18 +25,19 @@ class LoginWindow(QWidget):
 
 	def validate_password(self):
 		msg = QMessageBox()
-
-		if self.password_input.text() == '000':
+		with open("password.txt") as passwordFile:
+			password = str(passwordFile.read())
+		if self.password_input.text() == str(password):
 			self.setWindowTitle("")
 			msg.setText("Success")
-			msg.exec_()
-			app.quit()
+			msg.exec()
+			loginWindow.quit()
 		else:
 			msg.setText("Incorrect Password")
 			msg.exec_()
 
 if __name__ == "__main__":
-	app = QApplication(sys.argv)
+	loginWindow = QApplication(sys.argv)
 	form = LoginWindow()
 	form.show()
-	sys.exit(app.exec_())
+	sys.exit(loginWindow.exec_())
