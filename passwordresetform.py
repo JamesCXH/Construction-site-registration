@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QLabel, QLineEdit, QGridLayout, QMessageBox)
 import menu as menu
 
-class LoginWindow(QWidget):
+class passwordReset(QWidget):
 	def __init__(self):
 		super().__init__()
 		self.setWindowTitle("Password Reset Form")
@@ -49,6 +49,6 @@ class LoginWindow(QWidget):
 
 if __name__ == "__main__":
 	resetWindow = QApplication(sys.argv)
-	form = LoginWindow()
+	form = passwordReset()
 	form.show()
 	sys.exit(resetWindow.exec_())
