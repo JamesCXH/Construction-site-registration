@@ -34,14 +34,17 @@ class Ui_MainWindow(object):  # Main window where user queries
                     elif queriedPerson == line[2]:
                         workerIDs.append(line[0])
 
-        if len(workerIDs) == 1:  # Populates boxes with information of queried person
+                    elif queriedPerson == str(line[1] + " " + line[2]):
+                        workerIDs.append(line[0])
+
+        if len(workerIDs) == 1:
             self.populatePersonDetails(workerIDs[0])
             self.populateRecords(workerIDs[0])
 
         else:
             pass  # Need to deal with multiple search results
 
-    def populatePersonDetails(self, workerID):
+    def populatePersonDetails(self, workerID):  # Adds person information to the browsing area for user to easily view and read
         try:
             with open("exampleDB.csv", "r") as workersDatabase:
                 for line in csv.reader(workersDatabase):

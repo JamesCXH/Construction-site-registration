@@ -4,8 +4,12 @@ from PyQt5.QtWidgets import (QApplication, QWidget, QPushButton, QLabel, QLineEd
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-# Phase 1
 
+
+'''
+Phase 1
+class LoginWindow is a login window which the user is able to enter in a password, which upon authentication allows them to access the rest of the system.
+'''
 class LoginWindow(QWidget):  # Login window class, provides user interface for login window when user initially launches program
     def __init__(self):
         super().__init__()
@@ -19,8 +23,8 @@ class LoginWindow(QWidget):  # Login window class, provides user interface for l
         grid.addWidget(password_label, 1, 0)
         grid.addWidget(self.password_input, 1, 1)
 
-        login_button = QPushButton("Login")
-        login_button.clicked.connect(self.validate_password)
+        login_button = QPushButton("Click to Login")
+        login_button.clicked.connect(self.validate_password) # Runs function validate_password upon the clicking of the button
         grid.addWidget(login_button, 2, 0, 1, 2)
         grid.setRowMinimumHeight(2, 75)
 
@@ -29,7 +33,7 @@ class LoginWindow(QWidget):  # Login window class, provides user interface for l
     def validate_password(self):
         msg = QMessageBox()
         with open("password.txt") as passwordFile:
-            password = str(passwordFile.read())
+            password = str(passwordFile.read())[0:32767]
         if self.password_input.text() == str(password):
             self.setWindowTitle("")
             msg.setText("Success")
@@ -41,8 +45,10 @@ class LoginWindow(QWidget):  # Login window class, provides user interface for l
             msg.setText("Incorrect Password")
             msg.exec_()
 
-
-# Phase 1
+'''
+Phase 1 + 2
+class menuSelect is a simple selection menu which allows the user to launch either the query menu or the password reset form.
+'''
 class menuSelect(QWidget):  # Menu which provides user interface so that the user is able to decide what they want to do
     def __init__(self):
         super().__init__()
@@ -80,7 +86,10 @@ class menuSelect(QWidget):  # Menu which provides user interface so that the use
         self.hide()
 
 
-# Phase 2
+'''
+Phase 2
+class passwordReset is a form with validation that is used to reset the password that is used to login onto the system with.
+'''
 
 class passwordReset(QWidget):
     def __init__(self):
@@ -152,6 +161,7 @@ class Ui_MainWindow(object):  # Main window where user queries
 
         self.personInfo.clear()
         self.recordBrowser.clear()
+        self.analysisOut.clear()
         queriedPerson = self.searchBox.toPlainText()
         workerIDs = []
         workerIDs.clear()
@@ -174,35 +184,58 @@ class Ui_MainWindow(object):  # Main window where user queries
                     elif queriedPerson == line[2]:
                         workerIDs.append(line[0])
 
+                    elif queriedPerson == str(line[1] + " " + line[2]):
+                        workerIDs.append(line[0])
+
+
+
         if len(workerIDs) == 1:  # Populates boxes with information of queried person
             self.populatePersonDetails(workerIDs[0])
             self.populateRecords(workerIDs[0])
 
         else:
-            pass  # Need to deal with multiple search results
+            self.personInfo.setText("PERSON DOES NOT EXIST")
 
-    def populatePersonDetails(self, workerID):
+
+            # Need to deal with multiple search results
+
+    def populatePersonDetails(self, workerID):  # Populates boxes with information of queried person
         try:
             with open("exampleDB.csv", "r") as workersDatabase:
                 for line in csv.reader(workersDatabase):
+
                     if line[0] == workerID:
                         self.personInfo.setText("Worker ID: " + line[0] +
                                                 "\nFirst Name: " + line[1] +
                                                 "\nLast Name: " + line[2] +
                                                 "\nAccess level: " + line[3])
+
+
         except:
             self.personInfo.setText("PERSON DOES NOT EXIST")
 
     def populateRecords(self, workerID):
         try:
             with open(str(workerID) + ".csv", "r") as workerRecords:
+                lates_amount = 0
+                onTime_amount = 0
                 for line in csv.reader(workerRecords):
+                    if line[3] == "late":  # Counts how many lates on worker's record
+                        lates_amount += 1
+                    elif line[3] == "good":  # Counts how many on-times on worker's record
+                        onTime_amount += 1
                     self.recordBrowser.append(line[0] + "  " + line[1] + "  " + line[2])
+
+                self.analysisOut.setText("Lates: " + str(lates_amount) +
+                                        "\nOn Time: " + str(onTime_amount) +
+                                        "\nTotal: " + str(lates_amount + onTime_amount))
         except:
             self.recordBrowser.setText("FAILED TO LOAD")
+            self.analysisOut.setText("FAILED TO LOAD")
+
 
     def setupUi(self, MainWindow):
-        MainWindow.setObjectName("MainWindow")
+        MainWindow.setObjectName("Database search menu")
         MainWindow.resize(1200, 1200)
         self.MainWindow = QtWidgets.QWidget(MainWindow)
         self.MainWindow.setObjectName("MainWindow")
@@ -285,11 +318,3 @@ if __name__ == "__main__":
     MainWindow = QtWidgets.QMainWindow()
     loginForm.show()
     sys.exit(loginWindow.exec())
-
-# def launchMenu():
-# 	menuForm.show()
-# 	sys.exit(mainMenu.exec())
-#
-# def launchReset():
-# 	resetForm.show()
-# 	sys.exit(resetWindow.exec_())

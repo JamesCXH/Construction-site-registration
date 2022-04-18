@@ -1,24 +1,12 @@
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-import asyncio
 import io
-import glob
 import os
-import sys
-import time
-import uuid
 import cv2
-import requests
-from urllib.parse import urlparse
-from io import BytesIO
-from io import StringIO
-import PIL
-from PIL import Image, ImageDraw
 from azure.cognitiveservices.vision.face import FaceClient
 from msrest.authentication import CognitiveServicesCredentials
 from azure.cognitiveservices.vision.face.models import TrainingStatusType, Person
 import create_person_groups
 import csv
+from datetime import date, datetime
 
 # Azure set-up
 KEY = str(os.environ["AZURE_FACE_KEY_1"])
@@ -28,6 +16,8 @@ face_client = FaceClient(ENDPOINT, CognitiveServicesCredentials(KEY))
 
 group_name = "workers_list"
 face_names = {}
+location = "Example Location"
+latestHour = 9  # All workers are expected to arrive before 9am, hence the latest hour is set to 9
 
 
 def id_to_name(id_in):
@@ -53,6 +43,25 @@ def identify_face(image_in):
             for face in recognized_faces:
                 detected_name = face_client.person_group_person.get(group_name, face.candidates[0].person_id).name
                 name = id_to_name(detected_name)
+                add_record(detected_name)
                 return name
     except:
         return "Person unidentified"
+
+def add_record(workerID):
+
+    lateness = ""
+    today = date.today()
+    currentDate = today.today().strftime("%d-%b-%Y")
+    time = datetime.now()
+    currentTime = time.strftime("%H:%M")
+    if int(str(currentTime).split(":")[0]) > latestHour:
+        lateness = "late"
+    else:
+        lateness = "good"
+
+    toBeAppended = [currentDate, currentTime, location, lateness]  # Adds new row onto field
+    with open(str(workerID) + ".csv", "a") as workerRecords:
+        writer = csv.writer(workerRecords)
+        writer.writerow(toBeAppended)
+

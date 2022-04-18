@@ -37,6 +37,7 @@ def classifyHelmet(in_head):
         print("No hard-hat detected")
         return False
 
+
 def largest_face(face_arr):
     areas = [w*h for x, y, w, h in face_arr]
     biggest_index = np.argmax(areas)
