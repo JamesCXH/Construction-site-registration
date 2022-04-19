@@ -6,8 +6,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 # Phase 1
 
-class LoginWindow(
-    QWidget):  # Login window class, provides user interface for login window when user initially launches program
+class LoginWindow(QWidget):  # Login window class, provides user interface for login window when user initially launches program
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Login Form")
@@ -56,9 +55,9 @@ class menuSelect(QWidget):  # Menu which provides user interface so that the use
         search_button.clicked.connect(self.launch_db)
         grid.addWidget(search_button, 1, 0, 1, 2)
 
-        add_face_button = QPushButton("Add face")
-        add_face_button.clicked.connect(self.add_person)
-        grid.addWidget(add_face_button, 2, 0, 1, 2)
+        # add_face_button = QPushButton("Add face")
+        # add_face_button.clicked.connect(self.add_person)
+        # grid.addWidget(add_face_button, 2, 0, 1, 2)
 
         reset_password_button = QPushButton("Reset password")
         reset_password_button.clicked.connect(self.launch_reset_menu)
@@ -72,8 +71,8 @@ class menuSelect(QWidget):  # Menu which provides user interface so that the use
         MainWindow.show()
         self.hide()
 
-    def add_person(self):
-        print("MMMM£")
+    # def add_person(self):
+    #     print("MMMM£")
 
     def launch_reset_menu(self):
         self.resetMenu = passwordReset()
@@ -112,21 +111,37 @@ class passwordReset(QWidget):
 
     def resetPassword(self):
         msg = QMessageBox()
+        specialSymbols = ["%", "$", "@", "#", "="]
+        print(len(self.password_input.text()))
         with open("password.txt") as passwordFile:
             pass
-        if not self.password_input.text() or not self.password_input2.text():
+        if not self.password_input.text() or not self.password_input2.text():  # Checks if either input space is blank
             msg.setText("Fields cannot be left blank")
             msg.exec()
-        elif self.password_input.text() == self.password_input2.text():
+        elif self.password_input.text() != self.password_input2.text():  # Checks if both input spaces match
+            msg.setText("Passwords must match")
+            msg.exec()
+        elif len(self.password_input.text()) < 10:  # Checks if password is over 10 characters
+            msg.setText("Length should be at least 10 characters")
+            msg.exec()
+        elif not any(char.isdigit() for char in self.password_input.text()):  # Checks that at least one of the characters in the password is a digit
+            msg.setText("Password should contain numbers")
+            msg.exec()
+        elif not any(char.isupper() for char in self.password_input.text()):  # Checks that at least one of the characters in the password is an uppercase letter
+            msg.setText("Password should contain uppercase letters")
+            msg.exec()
+        elif not any(char.islower() for char in self.password_input.text()):  # Checks that at least one of the characters in the password is a lowercase letter
+            msg.setText("Password should lowercase letters")
+            msg.exec()
+        if not any(char in specialSymbols for char in self.password_input.text()):  # Checks that at least one of the characters in the password is a special symbol
+            msg.setText("Password should contain special symbols (e.g., @, $, =, #, $)")
+        else: # After ALL validation checks are passed, the password is able to be changed
             self.setWindowTitle("")
             msg.setText("Success")
             msg.exec()
-            with open("password.txt", "w") as passwordFile:
-                passwordFile.write(self.password_input.text())
+            with open("password.txt", "w") as passwordFile:  # Opens password file
+                passwordFile.write(self.password_input.text())  # Writes new password into file
             resetWindow.quit()
-        else:
-            msg.setText("Password's don't match")
-            msg.exec()
 
 
 # Phase 3
@@ -140,8 +155,6 @@ class Ui_MainWindow(object):  # Main window where user queries
         queriedPerson = self.searchBox.toPlainText()
         workerIDs = []
         workerIDs.clear()
-
-        print("searchClicked success")
 
         with open("exampleDB.csv", "r") as workerList:
 

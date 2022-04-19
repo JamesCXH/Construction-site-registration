@@ -24,6 +24,10 @@ ENDPOINT = str(os.environ["AZURE_FACE_ENDPOINT"])
 face_client = FaceClient(ENDPOINT, CognitiveServicesCredentials(KEY))
 # Azure set-up
 
+
+# Phase 4
+
+
 face_cascade = cv2.CascadeClassifier("venv/models/haarcascade_frontalface_default.xml") # Detect faces locally
 group_name = "workers_list"
 
@@ -46,7 +50,7 @@ def add_person(id):
     try:
         face_client.person_group.create(person_group_id=group_name, name=group_name)
         print("Person group creating: ", group_name)
-    except:
+    except:  # In case face is unusable for facial recognition, training process can still conitnue without breaking
         print("Group already exists")
         pass
 
@@ -56,11 +60,11 @@ def add_person(id):
             person_already_exists = True
             person_already_exists_id = str(face_client.person_group_person.list(group_name)[i].person_id)
 
-    person_images = [file for file in glob.glob(str("venv/people/" + str(id) + "/pictures/*.jpg"))]
+    person_images = [file for file in glob.glob(str("venv/people/" + str(id) + "/pictures/*.jpg"))]  # Opens file location named with the id of person who's face needs to be trained
 
     if person_already_exists == True:
         person = face_client.person_group_person.create(group_name, str(id))
-        time.sleep(60)
+        time.sleep(60)  # Program is paused as to not over call the faical recognition api and cause an error
         try:
             for image in person_images:
                 p = open(image, "r+b")

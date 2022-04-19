@@ -7,6 +7,10 @@ import cv2
 global x,y,w,h,detected_faces,input_image
 from face_recognition import *
 
+
+# Phase 4
+
+
 cam = cv2.VideoCapture(0)
 face_cascade = cv2.CascadeClassifier("venv/models/haarcascade_frontalface_default.xml")
 detected_faces = 0
@@ -19,12 +23,12 @@ wearing_hard_hat = False
 not_wearing_hard_hat = True
 
 def classifyHelmet(in_head):
-    resizing = cv2.resize(in_head, (76, 76), interpolation=cv2.INTER_AREA)
-    resized = np.expand_dims(resizing, axis=0)
-    resized = resized.astype("float32")
-    interpreter.set_tensor(input_details[0]['index'], resized)
-    interpreter.invoke()
-    output_data = interpreter.get_tensor(output_details[0]['index'])
+    resizing = cv2.resize(in_head, (76, 76), interpolation=cv2.INTER_AREA)  # Turns image of head from camera into a size fit for neural net model
+    resized = np.expand_dims(resizing, axis=0)  # Adds an extra dimension for specific type of activation function used in model so array is able to fit into model
+    resized = resized.astype("float32")  # Converts to float32 as tensorflow model only works with float32
+    interpreter.set_tensor(input_details[0]['index'], resized)  # Loads prepared image into model
+    interpreter.invoke()  # Runs model
+    output_data = interpreter.get_tensor(output_details[0]['index'])  # Returns result of model and saves as output_data
     pred = output_data[0][1] * 100  # prediction probability
     if pred > 99.9999:
         print("Hard-hat detected")
