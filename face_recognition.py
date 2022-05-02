@@ -61,7 +61,7 @@ def add_record(workerID):
         lateness = "good"
 
     toBeAppended = [currentDate, currentTime, location, lateness]  # Adds new row onto field
-    with open(str(workerID) + ".csv", "a") as workerRecords:
+    with open(str(workerID) + ".csv", "a", newline="\n") as workerRecords:
         writer = csv.writer(workerRecords)
         writer.writerow(toBeAppended)
 

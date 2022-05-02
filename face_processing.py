@@ -46,7 +46,7 @@ def largest_face(face_arr):
 
 
 while True:
-    check, frame = cam.read()
+    check, frame = cam.read()  # Reads input from default camera of device, if only one camera connected that camera will be used
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     # Detect the faces
@@ -101,7 +101,6 @@ while True:
             detected_name = identify_face(input_image)
         else:
             not_wearing_hard_hat = True
-            detected_name = identify_face(input_image)
 
 cam.release()
 cv2.destroyAllWindows()
