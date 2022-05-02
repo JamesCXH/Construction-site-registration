@@ -38,15 +38,23 @@ group_name = "workers_list"
 #     for (x,y,w,h) in faces:
 #         found_face = face_input[x:x+w, y:y+h]
 
+# with open("exampleDB.csv", "r") as workerList:
+#     person_name = ""
+#     for line in csv.reader(workerList):
+#         if str(id) == line[0]:
+#             person_name = str(str(line[1]) + " " + str(line[2]))
+#             print(person_name)
+
 def add_person(id):
+    """
+    The above function is adding a person to the group.
+
+    :param id: This is the id of the person who's face needs to be trained
+    """
     person_already_exists = False
     person_already_exists_id = ""
-    # with open("exampleDB.csv", "r") as workerList:
-    #     person_name = ""
-    #     for line in csv.reader(workerList):
-    #         if str(id) == line[0]:
-    #             person_name = str(str(line[1]) + " " + str(line[2]))
-    #             print(person_name)
+
+    # This is checking if the group already exists, if it does it will not create a new group.
     try:
         face_client.person_group.create(person_group_id=group_name, name=group_name)
         print("Person group creating: ", group_name)
@@ -55,13 +63,16 @@ def add_person(id):
         pass
 
     for i in range(len(face_client.person_group_person.list(group_name))):
-        # print(str(face_client.person_group_person.list(group_name)[i].person_id))
+        # This is checking if the person already exists in the group, if it does it will not create a new person.
         if str(id) == str(face_client.person_group_person.list(group_name)[i].name):
             person_already_exists = True
             person_already_exists_id = str(face_client.person_group_person.list(group_name)[i].person_id)
 
-    person_images = [file for file in glob.glob(str("venv/people/" + str(id) + "/pictures/*.jpg"))]  # Opens file location named with the id of person who's face needs to be trained
+    person_images = [file for file in glob.glob(str("venv/people/" + str(id) + "/pictures/*.jpg"))]
+    # The above code opens file location named with the id of person who's face needs to be trained
 
+    # The above code is checking if the person already exists in the database. If the person does exist, then the code
+    # will delete the person and add the person again.
     if person_already_exists == True:
         person = face_client.person_group_person.create(group_name, str(id))
         time.sleep(60)  # Program is paused as to not over call the faical recognition api and cause an error
@@ -73,10 +84,13 @@ def add_person(id):
                 except:
                     pass
         except:
+            # This is deleting the person from the group.
             face_client.person_group_person.delete(group_name, person_already_exists_id)
 
+        # This is deleting the person from the group.
         face_client.person_group_person.delete(group_name, person_already_exists_id)
 
+    # This is the code that is adding the person to the group.
     else:
         person = face_client.person_group_person.create(group_name, str(id))
         time.sleep(60)

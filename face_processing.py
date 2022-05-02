@@ -23,12 +23,26 @@ wearing_hard_hat = False
 not_wearing_hard_hat = True
 
 def classifyHelmet(in_head):
-    resizing = cv2.resize(in_head, (76, 76), interpolation=cv2.INTER_AREA)  # Turns image of head from camera into a size fit for neural net model
-    resized = np.expand_dims(resizing, axis=0)  # Adds an extra dimension for specific type of activation function used in model so array is able to fit into model
-    resized = resized.astype("float32")  # Converts to float32 as tensorflow model only works with float32
-    interpreter.set_tensor(input_details[0]['index'], resized)  # Loads prepared image into model
+    """
+    The above function takes an image of a head from the camera, resizes it to fit the model, adds an extra dimension to
+    the array, converts the array to float32, loads the image into the model, runs the model, and returns the result of
+    the model
+
+    :param in_head: The image of the head from the camera
+    :return: a boolean value, True if a hard-hat is detected and False if a hard-hat is not detected.
+    """
+    resizing = cv2.resize(in_head, (76, 76), interpolation=cv2.INTER_AREA)
+    # The above code turns image of head from camera into a size fit for neural net model
+    resized = np.expand_dims(resizing, axis=0)
+    # The above code adds an extra dimension for specific type of activation function used in model so array is able to
+    # fit into model
+    resized = resized.astype("float32")
+    # The above code converts to float32 as tensorflow model only works with float32
+    interpreter.set_tensor(input_details[0]['index'], resized)
+    # The above code loads prepared image into model
     interpreter.invoke()  # Runs model
-    output_data = interpreter.get_tensor(output_details[0]['index'])  # Returns result of model and saves as output_data
+    output_data = interpreter.get_tensor(output_details[0]['index'])
+    # The above code returns result of model and saves as output_data
     pred = output_data[0][1] * 100  # prediction probability
     if pred > 99.9999:
         print("Hard-hat detected")
@@ -39,6 +53,12 @@ def classifyHelmet(in_head):
 
 
 def largest_face(face_arr):
+    """
+    It takes an array of face coordinates, and returns the coordinates of the largest face
+
+    :param face_arr: an array of face coordinates, in the form of (x, y, w, h)
+    :return: The biggest face in the array of faces.
+    """
     areas = [w*h for x, y, w, h in face_arr]
     biggest_index = np.argmax(areas)
     biggest = face_arr[biggest_index]
@@ -46,19 +66,29 @@ def largest_face(face_arr):
 
 
 while True:
-    check, frame = cam.read()  # Reads input from default camera of device, if only one camera connected that camera will be used
 
+    # Reads input from default camera of device, if only one camera connected that camera will be used
+    check, frame = cam.read()
+
+    # Converting the image from BGR to grayscale.
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    # Detect the faces
+
+    # Detecting faces in the image.
     faces = face_cascade.detectMultiScale(gray, 1.1, 4)
 
     detected_faces = len(faces)
 
+    # This is checking if there are no faces detected or if there are more than one face detected. If either of these
+    # are true, then the hard hat detection is set to false, and the name of the person is set to nothing.
+    # This is to ensure that only one person is registered at a time for maximal accuracy of the hard hat detection
+    # model
     if detected_faces == 0 or detected_faces > 1:
         wearing_hard_hat = False
         not_wearing_hard_hat = False
         detected_name = ""
 
+    # Drawing a rectangle around the face, and then drawing a text box with the name of the person and whether they are
+    # wearing a hard hat or not.
     for (x, y, w, h) in faces:  # (x,y) is top left of the rectangle, (w,h) is bottom right
         x, y, w, h = np.multiply(0.96, x).astype(np.int32), np.multiply(0.55, y).astype(np.int32), np.multiply(1.042, w).astype(np.int32), np.multiply(1.1, h).astype(np.int32)
         # top_left_x = np.multiply(0.96, x)
@@ -92,6 +122,9 @@ while True:
     cv2.imshow("video", frame)
 
     key = cv2.waitKey(1)
+
+    # This is the code that runs the hard hat detection model. It is run when the escape key is pressed.
+    # In actual implementation, an external button is linked instead of escape key.
     if key == 27:
         wearing_hard_hat = False
         not_wearing_hard_hat = False

@@ -5,7 +5,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 '''
 Phase 1
-class LoginWindow is a login window which the user is able to enter in a password, which upon authentication allows them to access the rest of the system.
+class LoginWindow is a login window which the user is able to enter in a password, which upon authentication allows them 
+to access the rest of the system.
 '''
 
 
