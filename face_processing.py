@@ -1,9 +1,6 @@
 import cv2
 import numpy as np
 import tensorflow as tf
-import tflite
-import tflite_runtime
-import cv2
 global x,y,w,h,detected_faces,input_image
 from face_recognition import *
 
@@ -31,7 +28,7 @@ def classifyHelmet(in_head):
     :param in_head: The image of the head from the camera
     :return: a boolean value, True if a hard-hat is detected and False if a hard-hat is not detected.
     """
-    resizing = cv2.resize(in_head, (76, 76), interpolation=cv2.INTER_AREA)
+    resizing = cv2.resize(in_head, (76, 76), interpolation=cv2.INTER_AREA)  # 224, 224
     # The above code turns image of head from camera into a size fit for neural net model
     resized = np.expand_dims(resizing, axis=0)
     # The above code adds an extra dimension for specific type of activation function used in model so array is able to
@@ -91,17 +88,6 @@ while True:
     # wearing a hard hat or not.
     for (x, y, w, h) in faces:  # (x,y) is top left of the rectangle, (w,h) is bottom right
         x, y, w, h = np.multiply(0.96, x).astype(np.int32), np.multiply(0.55, y).astype(np.int32), np.multiply(1.042, w).astype(np.int32), np.multiply(1.1, h).astype(np.int32)
-        # top_left_x = np.multiply(0.96, x)
-        # top_left_x = top_left_x.astype(np.int32)
-
-        # top_left_y = np.multiply(0.55, y)
-        # top_left_y = top_left_y.astype(np.int32)
-
-        # bottom_right_x = np.multiply(1.042, w)
-        # bottom_right_x = bottom_right_x.astype(np.int32)
-
-        # bottom_right_y = np.multiply(1.1, h)
-        # bottom_right_y = bottom_right_y.astype(np.int32)
 
         big_rectangle = cv2.rectangle(frame, (x, y), (np.multiply(1/0.96, x).astype(np.int32) + w, np.multiply(1/0.55, y).astype(np.int32) + h), (255, 0, 0), 1)
         # cv2.rectangle(frame, (x,y), (x+w, y+h), (0, 255, 0), 1)

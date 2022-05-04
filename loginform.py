@@ -60,7 +60,8 @@ class LoginWindow(
 
 '''
 Phase 1 + 2
-class menuSelect is a simple selection menu which allows the user to launch either the query menu or the password reset form.
+class menuSelect is a simple selection menu which allows the user to launch either the query menu or the password reset 
+form.
 '''
 
 
@@ -76,10 +77,6 @@ class menuSelect(QWidget):  # Menu which provides user interface so that the use
         search_button = QPushButton("Search database")
         search_button.clicked.connect(self.launch_db)
         grid.addWidget(search_button, 1, 0, 1, 2)
-
-        # add_face_button = QPushButton("Add face")
-        # add_face_button.clicked.connect(self.add_person)
-        # grid.addWidget(add_face_button, 2, 0, 1, 2)
 
         # Creating a button that will launch the reset menu.
         reset_password_button = QPushButton("Reset password")
@@ -110,7 +107,8 @@ class menuSelect(QWidget):  # Menu which provides user interface so that the use
 
 '''
 Phase 2
-class passwordReset is a form with validation that is used to reset the password that is used to login onto the system with.
+class passwordReset is a form with validation that is used to reset the password that is used to login onto the system 
+with.
 '''
 
 
@@ -191,6 +189,10 @@ class passwordReset(QWidget):
 class Ui_MainWindow(object):  # Main window where user queries
 
     def searchClicked(self):
+        """
+        It searches for the queried person in the database and populates the personInfo box with the information of the
+        queried person.
+        """
 
         # Clearing the text boxes.
         self.personInfo.clear()
@@ -203,7 +205,8 @@ class Ui_MainWindow(object):  # Main window where user queries
         # Searching for the queried person in the database.
         with open("exampleDB.csv", "r") as workerList:
 
-            # Checking if the queriedPerson is a number. If it is, it will append the queriedPerson to the workerIDs list.
+            # Checking if the queriedPerson is a number. If it is, it will append the queriedPerson to the workerIDs
+            # list.
             if queriedPerson.isnumeric():
                 for line in csv.reader(workerList):
                     if queriedPerson == line[0]:
@@ -211,8 +214,8 @@ class Ui_MainWindow(object):  # Main window where user queries
                         self.populatePersonDetails(line[0])
 
             # The below code is checking if the queried person is a number or not. If it is not a number, then it will
-            # check the queried person against the first name, last name, and full name of the workers in the CSV file. If
-            # it matches, then it will append the worker ID to the workerIDs list.
+            # check the queried person against the first name, last name, and full name of the workers in the CSV file.
+            # If it matches, then it will append the worker ID to the workerIDs list.
             elif not queriedPerson.isnumeric():
 
                 for line in csv.reader(workerList):
@@ -238,6 +241,12 @@ class Ui_MainWindow(object):  # Main window where user queries
 
     # Reading a csv file and then printing the information of the queried person.
     def populatePersonDetails(self, workerID):  # Populates boxes with information of queried person
+        """
+        It opens a csv file, reads it line by line, and if the first item in the line is equal to the workerID, it sets the
+        text of a label to the information of the worker
+
+        :param workerID: The ID of the worker to be queried
+        """
         try:
             with open("exampleDB.csv", "r") as workersDatabase:
                 for line in csv.reader(workersDatabase):

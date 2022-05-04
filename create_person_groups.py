@@ -1,19 +1,8 @@
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-import asyncio
-import io
 import glob
 import os
 import sys
 import time
-import csv
-import uuid
 import cv2
-import requests
-from urllib.parse import urlparse
-from io import BytesIO
-import PIL
-from PIL import Image, ImageDraw
 from azure.cognitiveservices.vision.face import FaceClient
 from msrest.authentication import CognitiveServicesCredentials
 from azure.cognitiveservices.vision.face.models import TrainingStatusType, Person, QualityForRecognition
@@ -30,20 +19,6 @@ face_client = FaceClient(ENDPOINT, CognitiveServicesCredentials(KEY))
 
 face_cascade = cv2.CascadeClassifier("venv/models/haarcascade_frontalface_default.xml") # Detect faces locally
 group_name = "workers_list"
-
-# def find_face(face_in):
-#     global found_face
-#     face_input = cv2.imread(face_in) # CV2 input
-#     faces = face_cascade.detectMultiScale(face_input, 1.1, 4)
-#     for (x,y,w,h) in faces:
-#         found_face = face_input[x:x+w, y:y+h]
-
-# with open("exampleDB.csv", "r") as workerList:
-#     person_name = ""
-#     for line in csv.reader(workerList):
-#         if str(id) == line[0]:
-#             person_name = str(str(line[1]) + " " + str(line[2]))
-#             print(person_name)
 
 def add_person(id):
     """
